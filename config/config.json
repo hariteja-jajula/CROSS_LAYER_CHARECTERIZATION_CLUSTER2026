@@ -1,0 +1,11 @@
+{
+  "djc_csv": "/path/to/DIM_JOB_COMPOSITE.csv",
+  "gpu_telemetry_gz": "/path/to/ANL-ALCF-GPU-NODE-POLARIS_20250101_20251231.csv.gz",
+  "parquet_out_dir": "/path/to/gpu_telemetry_parquet",
+  "darshan_data": "/path/to/darshan_tarball_tree",
+  "gpu_parsed_out": "/path/to/data/gpu_metrics.csv",
+  "darshan_parsed_out": "/path/to/data/darshan_metrics_final.csv",
+  "combined_out": "/path/to/data/combined_metrics.csv",
+  "chunk_id": "/path/to/config/chunk_index.json",
+  "chunk_size": 500000
+}

@@ -1,0 +1,410 @@
+
+==============================================================================
+1. LOAD + MERGE
+==============================================================================
+Scheduler jobs: 262,634
+GPU rows/jobs:  262,634
+Darshan rows:   846,214
+Darshan unique jobs: 66,278
+Combined rows: 262,634
+Executable coverage overall: 24.5%
+
+==============================================================================
+2. TAXONOMY + FINAL PAPER RELABELS
+==============================================================================
+Wrote /pscratch/sd/h/hjajula/Darshan/cross_layer_hpc_tool/data/combined_metrics_final_paperstats.csv
+Total jobs: 262,634
+Total allocated GPU-hours: 16,530,438
+
+==============================================================================
+3. COVERAGE + TAXONOMY TABLE
+==============================================================================
+DCGM telemetry:      205,218 (78.1%)
+Darshan attached:    66,278 (25.2%)
+Darshan I/O detected:18,907 (7.2%)
+Both DCGM+Darshan:   48,332 (18.4%)
+
+Tier                                    Jobs        GPU-hrs  % GPU-hrs
+------------------------------------------------------------------------
+
+[Excluded from predictive modeling]
+No_GPU_Telemetry                      11,334      1,516,516       9.2%
+No_GPU_With_Darshan                      850        365,707       2.2%
+Short_No_GPU                           4,644          6,628       0.0%
+Short_No_GPU_With_IO                     686          1,620       0.0%
+Subtotal                              17,514      1,890,471      11.4%
+
+[Under-utilized]
+Quick_Cancel                          94,439          7,185       0.0%
+Failed_Job                            53,392      6,963,090      42.1%
+GPU_Idle_Timeout                      25,630      2,454,515      14.8%
+Idle                                   9,836        278,728       1.7%
+Scale_Inefficient                        995        108,179       0.7%
+IO_Bottlenecked                        5,776        147,222       0.9%
+Subtotal                             190,068      9,958,919      60.2%
+
+[Productive]
+Ideal_Compute_With_IO                    282        164,992       1.0%
+Compute_Bound                          5,971        974,265       5.9%
+Subtotal                               6,253      1,139,257       6.9%
+
+[Informational]
+Moderate_Compute_No_IO                20,665      2,423,423      14.7%
+Moderate_Compute_With_IO               2,871        482,304       2.9%
+Incidental_IO_Low_GPU                  1,512         89,160       0.5%
+Low_Efficiency                         1,640         12,740       0.1%
+Idle_Hidden_Activity                  22,111        534,164       3.2%
+Subtotal                              48,799      3,541,791      21.4%
+------------------------------------------------------------------------
+TOTAL                                262,634     16,530,438     100.0%
+
+Unsuccessful or under-utilized GPU-hours: 9,958,919 (60.2%)
+
+==============================================================================
+4. CROSS-LAYER INTERPRETATION
+==============================================================================
+Spearman r(GPU_util, io_time_frac) = -0.411 (N=14,390)
+Spearman r(GPU_util, BWio_MB)      = -0.272
+
+Tier/group                        n     P1     P2     P3   io_end
+--------------------------------------------------------------------
+Idle-like/Timeout            56,797    0.5    0.4    0.4    0.000
+IO_Bottlenecked               5,419    0.4    0.7    0.7    0.993
+Scale_Inefficient               989    6.5    7.6    7.6    0.000
+Compute_Bound                 5,955   83.0   90.9   87.1    0.000
+
+Scale_Inefficient power validation:
+  total=995, power>=50W=985 (99.0%), power<50W=10 (1.0%)
+
+==============================================================================
+5. I/O-MEDIATED UNDER-UTILIZATION DECOMPOSITION
+==============================================================================
+IO_Bottlenecked jobs: 5,776
+
+Bottleneck signature
+  Bandwidth-bound       1,186 ( 20.5%)
+  Metadata-bound           83 (  1.4%)
+  Rank-imbalance           68 (  1.2%)
+  Mixed                 4,208 ( 72.9%)
+
+Read/write temporal dominance
+  Read-dominated             857 ( 14.8%)
+  Write-dominated          2,219 ( 38.4%)
+  Balanced/interleaved     2,700 ( 46.7%)
+
+Burstiness
+  Sustained <=2 bursts     2,433 ( 42.1%)
+  Moderate 3-4 bursts      1,230 ( 21.3%)
+  Bursty >=5 bursts        2,113 ( 36.6%)
+  Concurrent R/W >10%      4,001 ( 69.3%)
+
+Independent metadata-time validation
+  meta_time_frac > 0.5       712 ( 12.3%)
+  op+time both metadata      677
+
+MPI-IO jobs: 12,605; cb_nodes=4: 12,605 (100.0%)
+
+==============================================================================
+6. USER CONCENTRATION + PERSISTENCE
+==============================================================================
+Unique users: 1,008
+Unique projects: 313
+Top 10 users share of under-utilized GPU-hours: 50.7%
+Top 51 users (5%) share of under-utilized GPU-hours: 83.7%
+
+Substantive under-utilized jobs in burst: 82,840/95,629 (86.6%)
+Including Quick_Cancel in burst:          169,887/190,068 (89.4%)
+
+==============================================================================
+7. I/O ACTIONABLE CONCENTRATION + T_IO-ONLY REPEATABILITY
+==============================================================================
+Actionable high-volume I/O jobs: 6,628 (10.0% of Darshan-covered jobs)
+Actionable users: 89
+Application-Limited: jobs=3,854, users=56, top5 volume share=81.0%
+Parallelism-Bounded: jobs=2,618, users=56, top5 volume share=74.7%
+Users in both diagnostic classes: 26
+
+T_io-only repeatability
+T_io-only inefficient users:        80
+Users with repeated signatures:     42 (52.5%)
+T_io-only inefficient jobs:         5,840
+Jobs in repeated signatures:        1,506 (25.8%)
+T_io-only inefficient volume:       364,644 GiB
+Repeated-signature volume:          104,827 GiB (28.7%)
+Repeated jobs median BW_IO:         466.0 MB/s
+
+Repeated jobs by diagnostic class
+                     users  jobs total_gib med_bw
+diagnostic_class                                 
+App_Limited             20   395    10,254   21.7
+Parallelism_Bounded     29  1111    94,573  536.9
+
+==============================================================================
+8. FEATURE ENGINEERING + CORE ML
+==============================================================================
+Building compact history (7-day lookback, last 10 jobs)...
+
+==============================================================================
+8b. BUILD EXECUTABLE HISTORY FOR COMPACT MODELS
+==============================================================================
+User-history features:             13
+Executable-history features:       11
+User+executable-history features:  11
+M0 features: 8; M1 features: 9; M2 features: 13; M3 features: 44
+Train jobs: 77,831 (2024-12-03 -> 2025-10-20)
+Test jobs:  19,458 (2025-10-20 -> 2025-12-31)
+M0 features: 8; M1 features: 9; M2 features: 13; M3 features: 44
+
+Model comparison
+Model                         AUC   macro-F1
+----------------------------------------------
+Stratified baseline        0.5003      0.491
+Walltime-only LR           0.6518      0.444
+M0 scheduler only          0.6720      0.518
+M1 scheduler+exe           0.6557      0.519
+M2 user history            0.8588      0.762
+M3 + exec history          0.8603      0.760
+
+M3 bootstrap 95% CI: [0.8555, 0.8653]
+M3 lift over M1: +0.2047 AUC
+M2 lift over M1: +0.2032 AUC
+
+5-fold temporal CV:
+  M1: 0.734 ± 0.076
+  M3: 0.876 ± 0.023
+  M3 > M1 in 5/5 folds
+
+==============================================================================
+9. MULTI-SEED STABILITY
+==============================================================================
+M1 AUC: 0.6566 ± 0.0018; F1: 0.5199 ± 0.0021
+M2 AUC: 0.8594 ± 0.0006; F1: 0.7611 ± 0.0004
+M3 AUC: 0.8608 ± 0.0010; F1: 0.7611 ± 0.0011
+M3-M1 lift: +0.2041 ± 0.0017
+
+==============================================================================
+10. OVR PER-TIER AUC: M1 vs M2 vs M3
+==============================================================================
+Tier                    support       M1       M2       M3    Δ M3-M1
+--------------------------------------------------------------------------
+Idle-like                     2 insufficient positives
+IO_Bottlenecked           1,515   0.8125   0.9688   0.9871     0.1745
+Scale_Inefficient           103   0.7020   0.8829   0.9043     0.2023
+GPU_Idle_Timeout          4,732   0.7183   0.8856   0.9071     0.1888
+
+LaTeX rows:
+\texttt{IO\_Bottlenecked} & 0.813 & 0.969 & 0.987 & $+0.175$ \\
+\texttt{Scale\_Inefficient} & 0.702 & 0.883 & 0.904 & $+0.202$ \\
+\texttt{GPU\_Idle\_Timeout} & 0.718 & 0.886 & 0.907 & $+0.189$ \\
+
+==============================================================================
+11. COLD-START STRATIFIED AUC
+==============================================================================
+User history bucket                   n    pos%      AUC
+----------------------------------------------------------
+0 prior jobs (cold start)           535   39.6%   0.5050
+1-3 prior jobs                    1,094   42.5%   0.7371
+4-9 prior jobs                    1,969   43.3%   0.8043
+10 prior jobs (max history)      15,725   30.3%   0.8831
+
+==============================================================================
+12. MODEL COMPARISON: RF vs BOOSTING
+==============================================================================
+Model                           AUC   macro-F1
+------------------------------------------------
+RF (M3 baseline)             0.8603     0.7604
+HistGradientBoosting         0.8659     0.7562
+XGBoost                      0.8760     0.7673
+LightGBM                     0.8665     0.7585
+Logistic Regression          0.8783     0.6663
+
+==============================================================================
+13. MULTICLASS TIER PREDICTION
+==============================================================================
+
+[RF M1]
+                  precision    recall  f1-score   support
+
+GPU_Idle_Timeout      0.343     0.659     0.451      4732
+           Ghost      0.000     0.500     0.001         2
+ IO_Bottlenecked      0.550     0.048     0.087      1515
+      Productive      0.776     0.413     0.539     13106
+    Scale_Waster      0.000     0.000     0.000       103
+
+        accuracy                          0.442     19458
+       macro avg      0.334     0.324     0.216     19458
+    weighted avg      0.649     0.442     0.480     19458
+
+
+[RF M3]
+                  precision    recall  f1-score   support
+
+GPU_Idle_Timeout      0.681     0.622     0.650      4732
+           Ghost      0.001     0.500     0.001         2
+ IO_Bottlenecked      0.962     0.417     0.581      1515
+      Productive      0.843     0.822     0.832     13106
+    Scale_Waster      0.000     0.000     0.000       103
+
+        accuracy                          0.738     19458
+       macro avg      0.497     0.472     0.413     19458
+    weighted avg      0.808     0.738     0.764     19458
+
+
+[LightGBM M3]
+                  precision    recall  f1-score   support
+
+GPU_Idle_Timeout      0.663     0.686     0.674      4732
+           Ghost      0.000     0.000     0.000         2
+ IO_Bottlenecked      0.894     0.245     0.384      1515
+      Productive      0.825     0.820     0.823     13106
+    Scale_Waster      0.124     0.117     0.120       103
+
+        accuracy                          0.739     19458
+       macro avg      0.501     0.373     0.400     19458
+    weighted avg      0.787     0.739     0.749     19458
+
+
+Multiclass macro-F1 summary
+  RF M3              0.4130
+  LightGBM M3        0.4003
+  RF M1              0.2158
+
+==============================================================================
+14. M4/M5 EXPANDED HISTORY
+==============================================================================
+Available compact cols: 6
+Available GPU cols:     36
+Available I/O cols:     43
+Building expanded user history once...
+Building expanded executable history once...
+Model                              #feat      AUC   macro-F1
+-----------------------------------------------------------------
+M1 scheduler + executable context       9   0.6557     0.5186
+M3 compact history                    44   0.8617     0.7631
+M4 expanded GPU history              140   0.8932     0.7954
+M5 expanded GPU/I/O history          263   0.8942     0.7954
+
+5-fold temporal CV: M3 vs M4 vs M5
+  M3 compact:         0.8763 ± 0.0235
+  M4 expanded GPU:    0.9009 ± 0.0210
+  M5 expanded GPU/IO: 0.8977 ± 0.0262
+
+==============================================================================
+OVR PER-TIER AUC: M1 vs M3 vs M4 vs M5
+==============================================================================
+Tier                    support       M1       M3       M4       M5    Δ M5-M1
+--------------------------------------------------------------------------------------
+Idle                          2 insufficient positives
+IO_Bottlenecked           1,515   0.8125   0.9891   0.9865   0.9883     0.1757
+Scale_Inefficient           103   0.7020   0.9061   0.9289   0.9323     0.2303
+GPU_Idle_Timeout          4,732   0.7183   0.9073   0.9093   0.9066     0.1884
+
+LaTeX rows:
+\texttt{IO\_Bottlenecked} & 1,515 & 0.813 & 0.989 & 0.987 & 0.988 & $+0.176$ \\
+\texttt{Scale\_Inefficient} & 103 & 0.702 & 0.906 & 0.929 & 0.932 & $+0.230$ \\
+\texttt{GPU\_Idle\_Timeout} & 4,732 & 0.718 & 0.907 & 0.909 & 0.907 & $+0.188$ \\
+
+==============================================================================
+15. SANITY CHECKS + FINAL SUMMARY
+==============================================================================
+Temporal ordering: OK
+No current-job performance telemetry leakage: OK
+Executable frequency is included as workload-context, not as performance telemetry.
+No duplicate JOB_NAME: OK
+No train/test overlap: OK
+Feature matrix SHA256[:16]: 1de0940aa5116801
+
+PASTE-READY SUMMARY
+
+CORPUS
+  total jobs:                  262,634
+  allocated GPU-hours:         16,530,438 (16.53M)
+  unique users/projects:       1,008 / 313
+
+COVERAGE
+  DCGM:                        205,218 (78.1%)
+  Darshan attached:            66,278 (25.2%)
+  joint DCGM+Darshan:          48,332 (18.4%)
+
+TAXONOMY
+  under-utilized GPU-hours:    9,958,919 (60.2%)
+
+USER CONCENTRATION
+  top 10 user share:           50.7% of under-utilized GPU-hours
+  top 5% user share:           83.7% of under-utilized GPU-hours
+
+ML
+  train/test jobs:             77,831 / 19,458
+  M1 AUC/F1:                   0.6557 / 0.5186
+  M2 AUC/F1:                   0.8588 / 0.7616
+  M3 AUC/F1:                   0.8603 / 0.7604
+  M3 bootstrap CI:             [0.8555, 0.8653]
+  M3-M1 lift:                  +0.2047
+  M3 multi-seed AUC/F1:        0.8608 ± 0.0010 / 0.7611 ± 0.0011
+  M3-M0 lift: +0.1883 
+  M3-M1 lift: +0.2047
+
+Total runtime: 13.6 min
+ALL SANITY CHECKS PASSED
+
+==============================================================================
+16. M5 BOOTSTRAP CI + FEATURE-FAMILY IMPORTANCE
+==============================================================================
+Refitting M3/M4/M5 to retain estimator + probabilities...
+  M3 AUC = 0.8617, M4 AUC = 0.8932, M5 AUC = 0.8942
+
+Bootstrap 95% CI (1,000 resamples on held-out test):
+  M4 expanded GPU history    AUC = 0.8932  CI = [0.8889, 0.8979]
+  M5 expanded GPU/IO history AUC = 0.8942  CI = [0.8898, 0.8988]
+
+M5 feature-family importance share (% of total importance mass):
+  Family                                  Sum    Share %    #Feat
+  ----------------------------------------------------------------
+  user_gpu_power_history               0.6220      62.20       36
+  user_scheduler_history               0.1355      13.55        7
+  scheduler+exec_context               0.1154      11.54        9
+  user_io_history                      0.0693       6.93       43
+  user_exec_gpu_power_history          0.0152       1.52       36
+  exec_gpu_power_history               0.0138       1.38       36
+  exec_io_history                      0.0120       1.20       43
+  user_exec_io_history                 0.0113       1.13       43
+  exec_history_summary                 0.0056       0.56       10
+
+M5 importance grouped for paper:
+  Group                                       Share %
+  ----------------------------------------------------
+  GPU/power history (any source)                65.10
+  User scheduler history                        13.55
+  Scheduler + exec context (current)            11.54
+  I/O history (any source)                       9.25
+  Executable scalar summaries                    0.56
+
+M5 top 15 individual features:
+  user_gpu_power_history           hist_power_p95                                   0.0393
+  user_scheduler_history           user_walltime_efficiency                         0.0387
+  user_gpu_power_history           hist_power_mean                                  0.0377
+  user_gpu_power_history           hist_power_std                                   0.0347
+  user_gpu_power_history           hist_power_max                                   0.0333
+  user_scheduler_history           user_fail_rate                                   0.0281
+  user_scheduler_history           user_mean_runtime                                0.0280
+  user_gpu_power_history           hist_temp_mean                                   0.0273
+  user_gpu_power_history           hist_util_p75                                    0.0272
+  user_gpu_power_history           hist_temp_p95                                    0.0272
+  user_gpu_power_history           hist_util_mean                                   0.0261
+  user_gpu_power_history           hist_temp_max                                    0.0257
+  user_gpu_power_history           hist_util_phase3                                 0.0255
+  user_gpu_power_history           hist_util_phase2                                 0.0245
+  user_gpu_power_history           hist_max_consecutive_idle_readings               0.0238
+
+------------------------------------------------------------------------------
+PASTE-READY (Section VIII + Conclusion):
+------------------------------------------------------------------------------
+  M5 held-out AUC: 0.894 (95% bootstrap CI [0.890, 0.899])
+  M5 macro-F1:     0.795
+  M4 held-out AUC: 0.893 (95% bootstrap CI [0.889, 0.898])
+  Importance attributable to GPU/power historical features: 65.1%
+  Importance attributable to I/O historical features:       9.2%
+  Importance attributable to user scheduler history:        13.6%
+  Importance attributable to current scheduler/exec context: 11.5%
+263
+263

@@ -1,0 +1,33 @@
+# Raw + large data — never commit (download per DATA_ACCESS.md)
+data/*.csv
+data/*.csv.gz
+data/*.parquet
+data/**/*.parquet
+*.darshan
+logs.tar.gz
+
+# Keep small derived artifacts that ARE tracked
+!data/derived/
+!data/derived/*.csv
+!data/derived/*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+*.ipynb
+
+# Run outputs — keep only the canonical probe under run_artifacts/
+*.out
+*.err
+*.log
+!run_artifacts/probe_52665894.out
+!run_artifacts/probe_52665894.err
+
+# Editor / OS / backups
+*.bak
+*.bak.*
+.DS_Store
+.vscode/
+.idea/

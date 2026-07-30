@@ -1,0 +1,6 @@
+tier,n,gpu_util_phase1_mean,gpu_util_phase1_median,gpu_util_phase2_mean,gpu_util_phase2_median,gpu_util_phase3_mean,gpu_util_phase3_median,phase_drop_mean,phase_drop_median,io_phase_start_frac_mean,io_phase_start_frac_median,io_phase_end_frac_mean,io_phase_end_frac_median,io_read_front_heavy_mean,io_read_front_heavy_median,io_write_back_heavy_mean,io_write_back_heavy_median,gpu_util_first_half_mean,gpu_util_first_half_median,gpu_util_second_half_mean,gpu_util_second_half_median,gpu_trajectory,io_pattern
+Ghost,8985,0.243,0.0,0.173,0.0,0.182,0.0,0.048,0.0,0.061,0.0,0.416,0.0,0.274,0.0,0.402,0.0,0.225,0.0,0.177,0.0,flat_idle,front_loaded
+IO_Bottlenecked,7756,0.469,0.0,0.496,0.0,0.463,0.0,0.014,0.0,0.013,0.0,0.944,0.997,0.614,1.0,0.269,0.0,0.479,0.0,0.466,0.0,flat_idle,full_job_io
+Compute_Bound,1552,81.187,82.741,87.863,89.783,85.293,87.375,-2.821,-1.034,0.001,0.0,0.447,0.0,0.331,0.0,0.347,0.0,83.299,83.907,86.12,88.044,sustained_high,front_loaded
+Balanced,3238,39.931,40.662,48.889,54.598,45.642,49.0,-3.762,-1.101,0.021,0.0,0.833,0.995,0.62,1.0,0.081,0.0,42.684,44.177,46.446,49.569,moderate_stable,mid_job
+Scale_Waster,201,8.712,6.839,6.547,6.0,6.616,5.525,1.779,0.494,0.008,0.0,0.294,0.0,0.219,0.0,0.194,0.0,8.237,7.594,6.458,6.114,moderate_stable,front_loaded

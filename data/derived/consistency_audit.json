@@ -1,0 +1,113 @@
+{
+  "corpus": {
+    "n_jobs": 262634,
+    "total_alloc_gpu_hours": 16530438.0,
+    "date_min": "2024-11-19 16:48:21",
+    "date_max": "2025-12-31 23:51:50",
+    "calendar_months": 13.388157894736842
+  },
+  "identifiers": {
+    "duplicate_job_names": 0,
+    "duplicate_cobalt_ids": 262633,
+    "timestamp_violations_qs": 0,
+    "timestamp_violations_se": 11,
+    "runtime_overshoots_walltime": 1304
+  },
+  "djc_inventory": {
+    "total_columns": 66,
+    "gpu_fields_present": [
+      "GPUS_REQUESTED"
+    ],
+    "gpu_fields_absent": [
+      "GPUS_USED",
+      "GPU_UTILIZATION",
+      "GPU_MEMORY_ALLOCATED_AVERAGE",
+      "GPU_MEMORY_UTILIZATION_AVERAGE",
+      "GPU_POWER_USAGE_AVERAGE",
+      "GPU_TEMPERATURE_AVERAGE",
+      "GPUS_USED_PER_NODE_AVERAGE"
+    ]
+  },
+  "coverage": {
+    "n_dcgm": 205218,
+    "pct_dcgm": 78.13839792258428,
+    "n_darshan": 66278,
+    "pct_darshan": 25.235879589085954,
+    "n_both": 48332,
+    "pct_both": 18.402796286847856
+  },
+  "join_integrity": {
+    "sampled": 35,
+    "mean_drift": 1.2688263138573218e-15,
+    "max_drift": 1.4210854715202004e-14,
+    "mean_coverage": 0.9243146273219397
+  },
+  "failure_taxonomy": {
+    "total_failed": 122110,
+    "exit_neg29": 49012,
+    "git_classified": 25630,
+    "git_with_wrong_exit": 0
+  },
+  "taxonomy": {
+    "coverage_pct": 100.0,
+    "ghost_scale_waster_overlap": 0,
+    "tier_sizes": {
+      "Quick_Cancel": 94439,
+      "Failed_Job": 53392,
+      "Ghost": 31947,
+      "GPU_Idle_Timeout": 25630,
+      "Moderate_Compute_No_IO": 20665,
+      "No_GPU_Telemetry": 11334,
+      "Compute_Bound": 5971,
+      "IO_Bottlenecked": 5776,
+      "Short_No_GPU": 4644,
+      "Moderate_Compute_With_IO": 2871,
+      "Low_Efficiency": 1640,
+      "Incidental_IO_Low_GPU": 1512,
+      "Scale_Waster": 995,
+      "No_GPU_With_Darshan": 850,
+      "Short_No_GPU_With_IO": 686,
+      "Ideal_Compute_With_IO": 282
+    }
+  },
+  "darshan_bias": {
+    "n_with_darshan": 66278,
+    "n_without_darshan": 196356,
+    "fail_rate_with_pct": 26.904855306436527,
+    "fail_rate_without_pct": 53.1066022937929
+  },
+  "temporal": {
+    "monthly_wasteful_mean": 81.13675669920194,
+    "monthly_wasteful_std": 13.829260995625704
+  },
+  "leakage": {
+    "M1_forbidden_overlap": [],
+    "M3_forbidden_overlap": [],
+    "M3_total_features": 22,
+    "M3_historical_features": 13
+  },
+  "stability": {
+    "skipped": true
+  },
+  "user_concentration": {
+    "n_unique_users": 1008,
+    "top10_pct_jobs": 35.42610629240692,
+    "top10_pct_gpu_hrs": 45.254250552828665
+  },
+  "reproducibility": {
+    "public_release_columns": 66,
+    "gpu_fields_only_via_dcgm_join": [
+      "GPUS_USED",
+      "GPU_UTILIZATION",
+      "GPU_MEMORY_ALLOCATED_AVERAGE",
+      "GPU_MEMORY_UTILIZATION_AVERAGE",
+      "GPU_POWER_USAGE_AVERAGE",
+      "GPU_TEMPERATURE_AVERAGE",
+      "GPUS_USED_PER_NODE_AVERAGE"
+    ]
+  },
+  "meta": {
+    "runtime_minutes": 0.44,
+    "script": "00_consistency.py"
+  }
+}

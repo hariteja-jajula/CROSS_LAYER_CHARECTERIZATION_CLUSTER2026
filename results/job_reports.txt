@@ -1,0 +1,395 @@
+Loading combined metrics...
+  262,634 jobs loaded
+
+================================================================================
+  EXAMPLE REPORTS BY TIER
+================================================================================
+┌─────────────────────────────────────────────────────────────────┐
+│ 🔴 JOB REPORT: 5238553                                          │
+│ Ghost Job — GPU resources allocated but unused                 │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 1.0   GPUs: 4     Runtime: 0.08h    GPU: 0.0%    Exit: 1  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 0.3      WT: 0.1%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 0.08 hours on 1 nodes (4 GPUs) with 0.0% GPU  │
+│ utilization and transferred zero bytes of data. The GPUs were  │
+│ effectively idle for the entire job duration, consuming 0      │
+│ GPU-hours.                                                     │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. GPU utilization was 0.0% across all job phases (Phase 1:    │
+│ 0.0%, Phase 2: 0.0%, Phase 3: 0.0%). No I/O activity was       │
+│ detected.                                                      │
+│ 2. Walltime utilization was 0.1% — your job used only 0.08h of │
+│ the 72.0h requested, holding the scheduler slot for 870x longer│
+│ than needed.                                                   │
+│ 3. Pattern alert: 20 of your last 20 jobs (100%) were also     │
+│ classified as Ghost. This is a recurring workflow pattern, not │
+│ an isolated event.                                             │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Verify that your application is compiled with GPU support   │
+│ and that GPU kernels are being launched. Check for missing     │
+│ CUDA/HIP initialization.                                       │
+│ 2. If this workload does not use GPUs, submit to a CPU queue to│
+│ free GPU resources for compute-intensive jobs.                 │
+│ 3. Reduce your requested walltime to match actual runtime. A   │
+│ walltime of 0.5h would provide 50% buffer while freeing        │
+│ scheduler capacity.                                            │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🟡 JOB REPORT: 5748875                                          │
+│ I/O Bottlenecked — GPUs idle during sustained I/O              │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 1.0   GPUs: 4     Runtime: 0.06h    GPU: 0.0%    Exit: 0  │
+│ Data: 5.0 GB     BW: 21.7 MB/s    GPU-hrs: 0.3      WT: 12.1%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 0.06 hours on 1 nodes (4 GPUs) and transferred│
+│ 5.0 GB at 21.7 MB/s, but GPU utilization was only 0.0%. The    │
+│ GPUs were idle while your application performed I/O.           │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. GPU was idle across all job phases (P1: 0.0%, P2: 0.0%, P3: │
+│ 0.0%), indicating the GPU was never engaged — not even briefly.│
+│ 2. 99% of write operations are below 10 KB. This metadata-heavy│
+│ pattern generates excessive filesystem overhead on Lustre.     │
+│ 3. 99% of read operations are below 10 KB. Consider preloading │
+│ data into memory or using a data loader that aggregates small  │
+│ reads.                                                         │
+│ 4. Rank I/O imbalance ratio is 77.3x — the slowest rank        │
+│ transfers 77x more data than the fastest. This serialization   │
+│ bottleneck limits parallel I/O throughput.                     │
+│ 5. Pattern alert: 20 of your last 20 jobs (100%) were also     │
+│ classified as IO_Bottlenecked. This is a recurring workflow    │
+│ pattern, not an isolated event.                                │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Buffer small writes into larger I/O operations. Consider    │
+│ using node-local storage (/dev/shm or local NVMe) for          │
+│ intermediate files and writing aggregated output to the        │
+│ parallel filesystem.                                           │
+│ 2. Redistribute I/O across ranks more evenly. If using a       │
+│ single-writer pattern, switch to collective I/O with           │
+│ MPI_File_write_all.                                            │
+│ 3. Your effective bandwidth (21.7 MB/s) is well below the      │
+│ filesystem capability. Consider profiling with Darshan's DXT   │
+│ module for a detailed trace of your I/O pattern.               │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🟢 JOB REPORT: 6649668                                          │
+│ Compute Bound — healthy GPU utilization                        │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 2.0   GPUs: 8     Runtime: 1.01h    GPU: 91.6%   Exit: -29  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 8.1      WT: 101.1%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 1.01 hours on 2 nodes (8 GPUs) with 91.6% GPU │
+│ utilization. This is an efficiently compute-bound workload.    │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. Walltime utilization is 101.1% — your job nearly exhausted  │
+│ its allocation. Risk of timeout on longer runs.                │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Add 20-30% walltime buffer to prevent job termination, or   │
+│ implement checkpointing to resume from the last saved state.   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🟢 JOB REPORT: 6808170                                          │
+│ Balanced — both GPU and I/O active                             │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 1.0   GPUs: 4     Runtime: 0.40h    GPU: 20.3%   Exit: 0  │
+│ Data: 0.0 KB     BW: 0.0 MB/s     GPU-hrs: 1.6      WT: 39.9%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 0.40 hours on 1 nodes (4 GPUs) with 20.3% GPU │
+│ utilization and transferred 0.0 KB. Both compute and I/O       │
+│ resources are being utilized.                                  │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. Pattern alert: 20 of your last 20 jobs (100%) were also     │
+│ classified as Balanced. This is a recurring workflow pattern,  │
+│ not an isolated event.                                         │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🔴 JOB REPORT: 5042976                                          │
+│ Scale Waster — large allocation with minimal GPU use           │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 20.0  GPUs: 80    Runtime: 0.13h    GPU: 9.2%    Exit: 271  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 10.4     WT: 13.0%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 0.13 hours on 20 nodes (80 GPUs) with only    │
+│ 9.2% GPU utilization and no significant I/O. This large        │
+│ allocation was underutilized.                                  │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. At 9.2% utilization across 80 GPUs, your job consumed 10    │
+│ GPU-hours but performed minimal computation.                   │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Run a smaller-scale test first to verify GPU utilization    │
+│ before submitting large allocations.                           │
+│ 2. If your workload scales to only a fraction of 80 GPUs,      │
+│ reduce the node count to match actual parallelism.             │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🟡 JOB REPORT: 6527431                                          │
+│ Job Failed — exit code -29                                     │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 1.0   GPUs: 4     Runtime: 1.01h    GPU: N/A     Exit: -29  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 4.0      WT: 102.7%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 1.01 hours on 1 nodes (4 GPUs) before failing │
+│ with exit code -29. 4 GPU-hours were consumed before failure.  │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. Pattern alert: 17 of your last 20 jobs (85%) were also      │
+│ classified as Failed_Job. This is a recurring workflow pattern,│
+│ not an isolated event.                                         │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Exit code suggests job was killed by the scheduler (timeout │
+│ or resource limit). Increase walltime or reduce resource       │
+│ requirements.                                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ ⚪ JOB REPORT: 6014820                                          │
+│ Short Job — runtime under 60 seconds                           │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 1.0   GPUs: 4     Runtime: 0.01h    GPU: N/A     Exit: 0  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 0.0      WT: 3.2%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 19 seconds on 1 nodes (4 GPUs). Short jobs    │
+│ incur scheduling overhead relative to useful work performed.   │
+└─────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+  WORST OFFENDER REPORTS (highest GPU-hours waste jobs)
+================================================================================
+┌─────────────────────────────────────────────────────────────────┐
+│ 🔴 JOB REPORT: 6807056[2]                                       │
+│ Ghost Job — GPU resources allocated but unused                 │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 200.0 GPUs: 800   Runtime: 69.13h   GPU: 1.4%    Exit: -29  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 55303.6  WT: 3291.9%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 69.13 hours on 200 nodes (800 GPUs) with 1.4% │
+│ GPU utilization and transferred zero bytes of data. The GPUs   │
+│ were effectively idle for the entire job duration, consuming   │
+│ 55304 GPU-hours.                                               │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. GPU utilization was 1.4% across all job phases (Phase 1:    │
+│ 4.3%, Phase 2: 0.0%, Phase 3: 0.0%). No I/O activity was       │
+│ detected.                                                      │
+│ 2. GPU memory allocation detected (1.1 GB) despite zero compute│
+│ utilization. Something was loaded onto the GPU but no compute  │
+│ kernels executed.                                              │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Verify that your application is compiled with GPU support   │
+│ and that GPU kernels are being launched. Check for missing     │
+│ CUDA/HIP initialization.                                       │
+│ 2. If this workload does not use GPUs, submit to a CPU queue to│
+│ free GPU resources for compute-intensive jobs.                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🔴 JOB REPORT: 6436973                                          │
+│ Ghost Job — GPU resources allocated but unused                 │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 480.0 GPUs: 1920  Runtime: 24.00h   GPU: 0.0%    Exit: -29  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 46089.1  WT: 100.0%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 24.00 hours on 480 nodes (1920 GPUs) with 0.0%│
+│ GPU utilization and transferred zero bytes of data. The GPUs   │
+│ were effectively idle for the entire job duration, consuming   │
+│ 46089 GPU-hours.                                               │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. GPU utilization was 0.0% across all job phases (Phase 1:    │
+│ 0.0%, Phase 2: 0.0%, Phase 3: 0.0%). No I/O activity was       │
+│ detected.                                                      │
+│ 2. Pattern alert: 15 of your last 20 jobs (75%) were also      │
+│ classified as Ghost. This is a recurring workflow pattern, not │
+│ an isolated event.                                             │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Verify that your application is compiled with GPU support   │
+│ and that GPU kernels are being launched. Check for missing     │
+│ CUDA/HIP initialization.                                       │
+│ 2. If this workload does not use GPUs, submit to a CPU queue to│
+│ free GPU resources for compute-intensive jobs.                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🔴 JOB REPORT: 4294271                                          │
+│ Ghost Job — GPU resources allocated but unused                 │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 384.0 GPUs: 1536  Runtime: 24.01h   GPU: 4.2%    Exit: -29  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 36876.8  WT: 100.0%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 24.01 hours on 384 nodes (1536 GPUs) with 4.2%│
+│ GPU utilization and transferred zero bytes of data. The GPUs   │
+│ were effectively idle for the entire job duration, consuming   │
+│ 36877 GPU-hours.                                               │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. GPU utilization was 4.2% across all job phases (Phase 1:    │
+│ 7.8%, Phase 2: 4.1%, Phase 3: 0.6%). No I/O activity was       │
+│ detected.                                                      │
+│ 2. Multi-node allocation (384 nodes, 1536 GPUs) with zero      │
+│ compute and zero I/O suggests this workload may not require GPU│
+│ resources.                                                     │
+│ 3. GPU memory allocation detected (1.3 GB) despite zero compute│
+│ utilization. Something was loaded onto the GPU but no compute  │
+│ kernels executed.                                              │
+│ 4. Pattern alert: 15 of your last 20 jobs (75%) were also      │
+│ classified as Ghost. This is a recurring workflow pattern, not │
+│ an isolated event.                                             │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Verify that your application is compiled with GPU support   │
+│ and that GPU kernels are being launched. Check for missing     │
+│ CUDA/HIP initialization.                                       │
+│ 2. If this workload does not use GPUs, submit to a CPU queue to│
+│ free GPU resources for compute-intensive jobs.                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🔴 JOB REPORT: 5648187                                          │
+│ Ghost Job — GPU resources allocated but unused                 │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 256.0 GPUs: 1024  Runtime: 24.01h   GPU: 3.3%    Exit: -29  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 24590.8  WT: 100.1%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 24.01 hours on 256 nodes (1024 GPUs) with 3.3%│
+│ GPU utilization and transferred zero bytes of data. The GPUs   │
+│ were effectively idle for the entire job duration, consuming   │
+│ 24591 GPU-hours.                                               │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. GPU utilization was 3.3% across all job phases (Phase 1:    │
+│ 3.1%, Phase 2: 3.2%, Phase 3: 3.6%). No I/O activity was       │
+│ detected.                                                      │
+│ 2. GPU memory allocation detected (1.4 GB) despite zero compute│
+│ utilization. Something was loaded onto the GPU but no compute  │
+│ kernels executed.                                              │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Verify that your application is compiled with GPU support   │
+│ and that GPU kernels are being launched. Check for missing     │
+│ CUDA/HIP initialization.                                       │
+│ 2. If this workload does not use GPUs, submit to a CPU queue to│
+│ free GPU resources for compute-intensive jobs.                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🔴 JOB REPORT: 6080539                                          │
+│ Ghost Job — GPU resources allocated but unused                 │
+├─────────────────────────────────────────────────────────────────┤
+│ Nodes: 256.0 GPUs: 1024  Runtime: 24.01h   GPU: 0.0%    Exit: -29  │
+│ Data: 0 bytes    BW: N/A          GPU-hrs: 24589.7  WT: 100.1%│
+├─────────────────────────────────────────────────────────────────┤
+│ Your job ran for 24.01 hours on 256 nodes (1024 GPUs) with 0.0%│
+│ GPU utilization and transferred zero bytes of data. The GPUs   │
+│ were effectively idle for the entire job duration, consuming   │
+│ 24590 GPU-hours.                                               │
+│                                                                 │
+│ FINDINGS:                                                       │
+│ 1. GPU utilization was 0.0% across all job phases (Phase 1:    │
+│ 0.0%, Phase 2: 0.0%, Phase 3: 0.0%). No I/O activity was       │
+│ detected.                                                      │
+│ 2. Pattern alert: 11 of your last 20 jobs (55%) were also      │
+│ classified as Ghost. This is a recurring workflow pattern, not │
+│ an isolated event.                                             │
+│                                                                 │
+│ RECOMMENDATIONS:                                                │
+│ 1. Verify that your application is compiled with GPU support   │
+│ and that GPU kernels are being launched. Check for missing     │
+│ CUDA/HIP initialization.                                       │
+│ 2. If this workload does not use GPUs, submit to a CPU queue to│
+│ free GPU resources for compute-intensive jobs.                 │
+└─────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+  DEPLOYMENT IMPACT ANALYSIS
+================================================================================
+If deployed on all 262,634 jobs:
+
+  critical      130,686 jobs ( 49.8%) |    4,886,922 GPU-hrs
+  warning        42,107 jobs ( 16.0%) |    4,593,448 GPU-hrs
+  good           16,603 jobs (  6.3%) |    3,839,372 GPU-hrs
+  info           73,238 jobs ( 27.9%) |    3,210,695 GPU-hrs
+
+  Actionable reports generated: 172,793 (65.8%)
+  GPU hours covered:           9,480,370
+
+  cb_nodes tuning recommendations: 1,384 jobs
+    → Automated: no user action needed, facility can set per-allocation defaults
+
+  CPU queue redirect recommendations: 127,191 Ghost jobs
+    → GPU hours recoverable: 3,943,402
+
+  Walltime reduction recommendations: 140,074 jobs (using <10% of requested)
+
+  Unique users who would receive at least one critical report:
+    Critical: 963 users
+    Warning:  661 users
+
+  Repeat offenders (>10 critical reports): 661 users
+    Top 5:
+      ···272514: 12,711 critical reports
+      ···019952: 8,557 critical reports
+      ···529383: 3,363 critical reports
+      ···094320: 3,281 critical reports
+      ···888469: 2,881 critical reports
+
+================================================================================
+  RECOMMENDATION DISTRIBUTION
+================================================================================
+Estimated recommendation distribution (scaled from 1000 sample):
+
+  reduce_walltime             73,274 jobs ██████████████████████████████
+  cpu_queue_redirect          18,384 jobs ███████
+  gpu_verification            18,384 jobs ███████
+  buffer_small_writes         13,656 jobs █████
+  batch_short_jobs            10,242 jobs ████
+  rank_rebalance               5,252 jobs ██
+  checkpointing                3,676 jobs █
+  io_profiling                 2,888 jobs █
+  reduce_scale                 2,626 jobs █
+  cb_nodes_tuning              1,050 jobs 
+
+  Total recommendations:   149,432
+  Unique recommendation types: 10
+
+================================================================================
+  PAPER CONTENT — AUTOMATED FEEDBACK LOOP
+================================================================================
+--- PAPER PARAGRAPH (§6 Discussion — Operational Feedback Loop) ---
+
+To demonstrate the operational utility of the cross-layer pipeline,
+we implement an automated per-job diagnostic report generator that
+translates cross-layer classification into plain-English feedback
+with specific, actionable recommendations. Applied retrospectively
+to the full Polaris dataset, the system would generate actionable
+reports for 142,397 waste-tier jobs (54.2% of submissions),
+including 127,191 CPU-queue redirect recommendations for Ghost
+jobs with zero I/O, and 1,384 cb\_nodes tuning recommendations
+for multi-node MPI-IO jobs using the facility default of 4 aggregator
+nodes. The report system requires no manual analysis — classification,
+diagnosis, and recommendation are fully automated from the three
+telemetry sources, enabling a closed-loop operational workflow from
+job completion to user notification.
+
+================================================================================
+  DONE — pipe output to a file:
+  python -m pipeline.11_job_reports --config config/config.json > job_reports.txt
+================================================================================

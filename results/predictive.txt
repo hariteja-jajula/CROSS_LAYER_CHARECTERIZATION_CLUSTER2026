@@ -1,0 +1,263 @@
+Loading combined metrics...
+  262,634 jobs loaded
+  262,634 jobs with timestamps and tiers
+Building user history features (window=10 jobs)...
+  Processed 400/1008 users, 133,631 samples...
+  Processed 600/1008 users, 180,109 samples...
+  Processed 800/1008 users, 216,396 samples...
+  Processed 1000/1008 users, 253,142 samples...
+  Feature matrix: 253,932 samples, 101 columns
+Feature matrix → /pscratch/sd/h/hjajula/Darshan/cross_layer_hpc_tool/data/ml_features.csv
+
+================================================================================
+  TASK 1: NEXT-JOB CROSS-LAYER TIER PREDICTION (Multiclass)
+================================================================================
+Train (Jan-Aug): 178,673 samples
+Test (Sep-Dec):  75,259 samples
+
+Train tier distribution:
+target_tier
+Ghost              81863
+Short_Job          32844
+Other              21510
+Failed_Job         20976
+Compute_Bound       9417
+IO_Bottlenecked     7104
+Balanced            2495
+Scale_Waster        2464
+
+Test tier distribution:
+target_tier
+Ghost              40134
+Other               8705
+Failed_Job          8340
+Short_Job           8143
+IO_Bottlenecked     4501
+Compute_Bound       3478
+Scale_Waster         985
+Balanced             973
+
+--- Random Forest (n=200, max_depth=15) ---
+Accuracy: 0.7040 (70.4%)
+
+Classification Report:
+                 precision    recall  f1-score   support
+
+       Balanced       0.52      0.77      0.62       973
+  Compute_Bound       0.45      0.85      0.59      3478
+     Failed_Job       0.60      0.62      0.61      8340
+          Ghost       0.84      0.77      0.80     40134
+IO_Bottlenecked       0.74      0.80      0.77      4501
+          Other       0.66      0.67      0.66      8705
+   Scale_Waster       0.31      0.77      0.44       985
+      Short_Job       0.53      0.35      0.42      8143
+
+       accuracy                           0.70     75259
+      macro avg       0.58      0.70      0.62     75259
+   weighted avg       0.72      0.70      0.71     75259
+
+
+--- Gradient Boosting (n=200, max_depth=5) ---
+Accuracy: 0.7205 (72.1%)
+
+Classification Report:
+                 precision    recall  f1-score   support
+
+       Balanced       0.38      0.61      0.47       973
+  Compute_Bound       0.64      0.60      0.62      3478
+     Failed_Job       0.66      0.56      0.61      8340
+          Ghost       0.77      0.88      0.82     40134
+IO_Bottlenecked       0.75      0.69      0.72      4501
+          Other       0.70      0.63      0.66      8705
+   Scale_Waster       0.58      0.54      0.56       985
+      Short_Job       0.51      0.28      0.36      8143
+
+       accuracy                           0.72     75259
+      macro avg       0.62      0.60      0.60     75259
+   weighted avg       0.71      0.72      0.71     75259
+
+
+--- Top 20 Feature Importances (Random Forest) ---
+  hist_gpu_util_mean_max                        0.0341 ██████████████████████████████
+  hist_tier_Scale_Waster_frac                   0.0321 ████████████████████████████
+  hist_tier_Other_frac                          0.0297 ██████████████████████████
+  hist_tier_Compute_Bound_frac                  0.0263 ███████████████████████
+  hist_gpu_util_mean_last                       0.0252 ██████████████████████
+  hist_RUNTIME_SECONDS_max                      0.0213 ██████████████████
+  hist_tier_Failed_Job_frac                     0.0211 ██████████████████
+  hist_gpu_util_mean_mean                       0.0211 ██████████████████
+  hist_tier_Balanced_frac                       0.0204 █████████████████
+  hist_RUNTIME_SECONDS_mean                     0.0200 █████████████████
+  hist_total_bytes_mean                         0.0198 █████████████████
+  hist_gpu_power_mean_mean                      0.0197 █████████████████
+  hist_RUNTIME_SECONDS_last                     0.0195 █████████████████
+  hist_gpu_power_mean_max                       0.0191 ████████████████
+  hist_waste_frac                               0.0191 ████████████████
+  hist_is_waste_mean                            0.0187 ████████████████
+  hist_total_bytes_min                          0.0169 ██████████████
+  hist_gpu_hours_mean                           0.0168 ██████████████
+  hist_gpu_zero_util_frac_mean                  0.0168 ██████████████
+  hist_gpu_zero_util_frac_min                   0.0167 ██████████████
+
+--- Baselines ---
+Most-frequent class (Ghost): 0.5333 (53.3%)
+Random Forest lift over baseline:     1.32x
+Gradient Boosting lift over baseline:  1.35x
+
+--- Per-Class Accuracy (RF) ---
+  Ghost                  0.773 (77.3%) | n=40,134
+  Short_Job              0.346 (34.6%) | n=8,143
+  IO_Bottlenecked        0.804 (80.4%) | n=4,501
+  Other                  0.674 (67.4%) | n=8,705
+  Failed_Job             0.621 (62.1%) | n=8,340
+  Compute_Bound          0.851 (85.1%) | n=3,478
+  Scale_Waster           0.772 (77.2%) | n=985
+  Balanced               0.769 (76.9%) | n=973
+
+================================================================================
+  TASK 2: BINARY WASTE PREDICTION (waste vs non-waste)
+================================================================================
+Train: 178,673 | Waste: 91,431 (51.2%)
+Test:  75,259  | Waste: 45,620 (60.6%)
+
+--- Random Forest ---
+Accuracy:           0.8207
+Precision (waste):  0.8306
+Recall (waste):     0.8845
+F1 (waste):         0.8567
+ROC AUC:            0.8933
+Average Precision:  0.9205
+
+Classification Report:
+              precision    recall  f1-score   support
+
+   Non-waste       0.80      0.72      0.76     29639
+       Waste       0.83      0.88      0.86     45620
+
+    accuracy                           0.82     75259
+   macro avg       0.82      0.80      0.81     75259
+weighted avg       0.82      0.82      0.82     75259
+
+
+--- Gradient Boosting ---
+Accuracy: 0.8284 | AUC: 0.9002 | F1: 0.8630
+
+--- Baselines ---
+Majority class baseline:  0.6062
+RF lift over baseline:    1.35x
+RF AUC vs random (0.5):   1.79x
+
+--- Top 15 Feature Importances (RF) ---
+  hist_waste_frac                               0.0769 ██████████████████████████████
+  hist_is_waste_mean                            0.0751 █████████████████████████████
+  hist_is_waste_last                            0.0736 ████████████████████████████
+  hist_gpu_zero_util_frac_last                  0.0641 █████████████████████████
+  hist_tier_Ghost_frac                          0.0480 ██████████████████
+  hist_gpu_zero_util_frac_mean                  0.0456 █████████████████
+  hist_is_waste_max                             0.0355 █████████████
+  hist_gpu_zero_util_frac_max                   0.0340 █████████████
+  hist_is_waste_min                             0.0328 ████████████
+  hist_gpu_power_mean_last                      0.0274 ██████████
+  hist_gpu_util_mean_last                       0.0234 █████████
+  hist_is_waste_std                             0.0216 ████████
+  hist_gpu_zero_util_frac_min                   0.0202 ███████
+  hist_gpu_power_mean_mean                      0.0200 ███████
+  hist_gpu_temp_mean_mean                       0.0148 █████
+
+  At 90% recall: precision = 0.817
+
+  At 80% recall: precision = 0.878
+
+  At 70% recall: precision = 0.907
+
+  At 60% recall: precision = 0.926
+
+================================================================================
+  TASK 3: MONTHLY USER WASTE GPU-HOURS FORECASTING
+================================================================================
+Monthly user summaries: 4,162 user-month records
+Unique users: 1008
+Lag feature matrix: 1,822 samples
+Train (months 4-8): 940
+Test (months 9-12): 882
+
+--- Waste GPU Hours Prediction ---
+MAE:     3,093 GPU-hrs
+RMSE:    10,232 GPU-hrs
+R²:      0.1502
+Mean actual: 2,115 GPU-hrs
+MAE/Mean:    1.462
+
+--- Binary: Will user waste next month? ---
+Accuracy: 0.9433
+F1:       0.9708
+AUC:      0.6097
+Baseline: 0.9444
+
+--- Top 10 Feature Importances (waste hours regression) ---
+  hours_trend                              0.2671 ██████████████████████████████
+  lag1_waste_hours                         0.1862 ████████████████████
+  lag3_mean_runtime                        0.0823 █████████
+  lag3_waste_hours                         0.0510 █████
+  lag1_gpu_hours                           0.0401 ████
+  lag2_waste_hours                         0.0311 ███
+  lag2_mean_nodes                          0.0304 ███
+  lag1_mean_gpu_util                       0.0251 ██
+  lag1_waste_frac                          0.0249 ██
+  lag2_mean_gpu_util                       0.0233 ██
+
+================================================================================
+  TASK 4: FEATURE ABLATION — SCHEDULER-ONLY vs CROSS-LAYER
+================================================================================
+
+Feature Set                N_feat     Acc      F1     AUC   Lift
+-----------------------------------------------------------------
+Scheduler-only                 18  0.6110  0.6925  0.6225  1.01x
+Cross-layer-only               76  0.8116  0.8490  0.8804  1.34x
+All features                   94  0.8207  0.8567  0.8933  1.35x
+Majority baseline                  0.6062
+
+  Cross-layer features improve AUC by 43.5% over scheduler-only
+  This quantifies the value of cross-layer monitoring for predictive intervention
+
+================================================================================
+  PAPER-READY ML SUMMARY
+================================================================================
+Predictive capability analysis demonstrates that cross-layer features
+from a user's job history enable operationally useful predictions:
+
+Task 1 — Next-job tier prediction (multiclass):
+  RF accuracy:      70.4% (baseline: 53.3%, lift: 1.32x)
+  GB accuracy:      72.1%
+
+Task 2 — Binary waste prediction:
+  ROC AUC:          0.8933
+  F1 (waste class): 0.8567
+
+Task 3 — Monthly waste forecasting:
+  Regression R²:    0.1502
+  MAE:              3,093 GPU-hrs
+  Binary AUC:       0.6097
+
+Feature ablation:
+  Scheduler-only AUC: 0.6225
+  Cross-layer AUC:    0.8933
+  Improvement:        43.5%
+
+--- PAPER PARAGRAPH ---
+To assess whether cross-layer features support predictive intervention,
+we trained Random Forest and Gradient Boosting models to predict a job's
+cross-layer tier from the submitting user's prior job history. Using a
+temporal train/test split (January–August for training, September–December
+for evaluation), the models achieve 70.4% accuracy on 8-class tier
+prediction (1.3x over majority baseline) and 0.893 ROC AUC
+on binary waste prediction. Feature ablation confirms that cross-layer
+features (GPU utilization history, I/O patterns, tier distribution)
+substantially improve predictive power over scheduler metadata alone,
+quantifying the operational value of cross-layer telemetry correlation
+for proactive resource management.
+
+================================================================================
+  DONE — pipe output to a file:
+  python -m pipeline.10_predictive --config config/config.json > predictive.txt
+================================================================================
